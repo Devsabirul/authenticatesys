@@ -43,17 +43,16 @@ def forgetpassword(request):
     is_user = "None"
     user = ''
     msg = ''
-    if request.method=="POST":
-        email = request.POST['email']
-        newpassword = request.POST['newpassword']
-        
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            msg = 'User does not exist'
-            return redirect('forgetpassword')
+    email = request.GET.get('email')
+   
+    try:
+        user = User.objects.get(email=email)
+        is_user = "Done"
+    except User.DoesNotExist:
+        pass
 
-        
+    if request.method=="POST":
+        newpassword = request.POST['newpassword']
         if user.email == email:
             user.set_password(newpassword)
             user.save()
@@ -71,29 +70,3 @@ def forgetpassword(request):
     }
     
     return render(request,'forgetpass/forgetpass.html',context)
-
-
-
-def forgot(request):
-    if request.method == 'POST':
-        name = request.POST['name']
-        email = request.POST['email']
-        password = request.POST['new_pass']
-
-        try:
-            user = User.objects.get(username=name)
-        except User.DoesNotExist:
-            messages.error(request, 'User does not exist')
-            return redirect('forgot')
-
-        if user.email == email:
-            user.set_password(password)
-            user.save()
-            update_session_auth_hash(request, user)
-            messages.success(request, 'Reset password is successful')
-            return redirect('login')
-        else:
-            messages.error(request, 'Email does not match')
-            return redirect('forgot')
-    
-    return render(request, 'forgot.html')
