@@ -49,7 +49,7 @@ def forgetpassword(request):
         user = User.objects.get(email=email)
         is_user = "Done"
     except User.DoesNotExist:
-        pass
+        msg = "Please enter your valid email"
 
     if request.method=="POST":
         newpassword = request.POST['newpassword']
